@@ -80,7 +80,7 @@ cp .env.example .env
 Edit `.env` and fill in your PostgreSQL connection:
 
 ```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/paybridge
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/explorer_db
 FRONTEND_URL=http://localhost:5173
 ```
 
