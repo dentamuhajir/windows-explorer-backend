@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  db:
+  file-explorer-db:
     image: postgres:15
-    container_name: explorer-db
+    container_name: file-explorer-db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -11,8 +11,26 @@ services:
       POSTGRES_DB: explorer_db
     ports:
       - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d explorer_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  file-explorer-be:
+    build: .
+    container_name: file-explorer-be-app
+    depends_on:
+      file-explorer-db:
+        condition: service_healthy # Menunggu sampai healthcheck DB sukses
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@file-explorer-db:5432/explorer_db?schema=public"
+      FRONTEND_URL: "http://localhost:5173"
+    restart: unless-stopped
 
 volumes:
   pgdata:
